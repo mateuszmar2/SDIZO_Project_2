@@ -17,7 +17,7 @@
 
 class Graph
 {
-private:
+public:
     int **matrix;
     // Node **list;
     int size_edges; // ilość krawędzi
@@ -29,18 +29,13 @@ public:
     ~Graph();
     void deleteStructure();
     void fillZeros();
-    void Kruskal();
-    void Prim();
-    void Dijkstra(int start_node);
-    void FordBellman(int start_node);
-    void FordFulkerson(int start_node, int end_node);
     void loadGraphFromFile(const char *filename);
     void print();
-    void print(int **matrixToPrint, int sizeOfNodematrixToPrint);
+    void printMatrix();
+    void printList();
     void randomStructure(int size, float density);
     void matrixToList();
-    int getStartNode();
-    void ford_Bellman();
+    // int getStartNode();
 };
 
 #endif /* GRAPH_H_ */

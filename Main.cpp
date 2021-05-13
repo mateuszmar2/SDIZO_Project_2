@@ -4,6 +4,7 @@
 // #include <stdlib.h>
 
 #include "Graph.h"
+#include "Ford_Bellman.h"
 
 using namespace std;
 
@@ -109,6 +110,7 @@ void menuPath()
 		*/
 			break;
 		case 4: // Ford-Bellaman
+			fordBellmanMatrix(graph);
 			break;
 		case 5: // Dijkstra
 			break;

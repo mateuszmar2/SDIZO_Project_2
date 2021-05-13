@@ -7,6 +7,7 @@
 #include <ctime>
 #include <fstream>
 #include <sstream> // do stringstreama (wczytywanie)
+// #include <climits> // do INT_MAX
 
 #include "Graph.h"
 
@@ -59,6 +60,11 @@ void Graph::fillZeros()
 }
 
 void Graph::print()
+{
+    printMatrix();
+}
+
+void Graph::printMatrix()
 {
     // printowanie macierzy
     cout << endl
@@ -227,10 +233,10 @@ void Graph::loadGraphFromFile(const char *filename)
     }
 }
 
-int Graph::getStartNode()
-{
-    return this->start_node;
-}
+// int Graph::getStartNode()
+// {
+//     return this->start_node;
+// }
 
 void Graph::matrixToList()
 {
@@ -239,6 +245,76 @@ void Graph::matrixToList()
             this->matrix[i][j] = 0;
 }
 
-void Graph::ford_Bellman()
-{
-}
+// void Graph::ford_Bellman()
+// {
+//     // wagi ujemne
+//     int *distance = new int[this->size_nodes]; // tablica na koszt dojścia do elementu
+//     int *prev = new int[this->size_nodes];     // tablica na poprzedniki
+
+//     for (int i = 0; i < this->size_nodes; i++)
+//     {
+//         distance[i] = INT_MAX; // maksymalne wartości
+//         prev[i] = -1;          // -1 oznacza brak poprzednika
+//     }
+//     distance[start_node] = 0; //koszt dojścia do wierzchołka startowego
+//     bool change = false;      // zmienna przechowująca informacje o zmianach
+//     // pętla główna
+//     for (int i = 1; i < this->size_nodes; i++)
+//     {
+//         change = true;
+//         for (int j = 0; j < size_nodes; j++)
+//         {
+//             for (int k = 0; k < this->size_nodes; k++) // dla każdego sąsiada wierzchołka j
+//             {
+//                 if (this->matrix[j][k] != 0 && distance[j] != INT_MAX)
+//                 {
+//                     if (distance[k] > distance[j] + matrix[j][k]) // warunek relaksacji krawędzi
+//                     {
+//                         change = false;                           // zapamiętanie zmiany
+//                         distance[k] = distance[j] + matrix[j][k]; // relaksacja
+//                         prev[k] = j;                              // zmiana poprzednika
+//                     }
+//                 }
+//             }
+//         }
+//         if (change)
+//             break;
+//     }
+//     // sprawdzenie czy nie wystąpił cykl ujemny
+//     for (int i = 0; i < this->size_nodes; i++)
+//     {
+//         for (int j = 0; j < this->size_nodes; j++)
+//         {
+//             if (matrix[i][j] != 0)
+//             {
+//                 if (distance[j] > distance[i] + matrix[i][j])
+//                     change = false;
+//             }
+//         }
+//     }
+//     if (!change)
+//     {
+//         cout << "Cykl ujemny" << endl;
+//         delete[] distance;
+//         delete[] prev;
+//         return;
+//     }
+//     // wyświetlenie macierzy
+//     printMatrix();
+//     // wyświetlany jest numer węzła, długość drogi do niego oraz droga w postaci sekwencji wierzchołków
+//     cout << endl
+//          << "Wynik Ford-Bellman Macierz: " << endl;
+//     cout << "numer wezla : dlugosc -> droga" << endl;
+
+//     for (int i = 0; i < this->size_nodes; i++)
+//     {
+//         cout << i << ": " << distance[i] << " -> ";
+//         for (int j = i; j != -1; j = prev[j])
+//         {
+//             cout << j << " ";
+//         }
+//         cout << endl;
+//     }
+//     delete[] distance;
+//     delete[] prev;
+// }
