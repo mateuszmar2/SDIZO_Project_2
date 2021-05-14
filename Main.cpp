@@ -146,6 +146,7 @@ void menuPath()
 			break;
 		case 4: // Bellman - Ford
 			bellmanFordMatrix(graph);
+			bellmanFordList(graph);
 			break;
 		case 5: // Dijkstra
 			if (min_weight < 0 || max_weight < 0)
