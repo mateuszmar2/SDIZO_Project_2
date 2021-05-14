@@ -7,9 +7,6 @@
 
 using namespace std;
 
-// Oba MST nieskierowane i dodatnie wagi
-// Path oba skierowane Bellman_Ford może mieć ujemne
-
 void menuMST()
 {
 	Graph graph;
@@ -47,6 +44,7 @@ void menuMST()
 				cout << "Invalid number of edges" << endl;
 				break;
 			}
+			cout << "Density must be between 0 and 1" << endl;
 			cout << "Enter the density: ";
 			cin >> density;
 			if (density < 0 || density > 1)
@@ -123,6 +121,7 @@ void menuPath()
 				cout << "Invalid number of edges" << endl;
 				break;
 			}
+			cout << "Density must be between 0 and 1" << endl;
 			cout << "Enter the density: ";
 			cin >> density;
 			if (density < 0 || density > 1)

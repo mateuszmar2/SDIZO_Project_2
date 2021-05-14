@@ -1,19 +1,26 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
-// class Node
-// {
-// public:
-//     Node *next;
-//     Edge edge;
-//     Node();
-// };
+struct Edge
+{
+    int weight;
+    int from;
+    int to;
+};
+
+class Node
+{
+public:
+    Node *next;
+    int weight; // waga do nexta
+    int value;  // wartość nexta
+};
 
 class Graph
 {
 public:
     int **matrix;
-    // Node **list;
+    Node **list;    // tablica dynamiczna dla listy sasiedztwa
     int size_edges; // ilość krawędzi
     int size_nodes; // ilość wierzchołków
     int start_node; // wierzchołek początkowy
@@ -22,6 +29,7 @@ public:
     Graph();
     ~Graph();
     void deleteStructure();
+    void makeGraph(int size);
     void fillZeros();
     void print();
     void printMatrix();

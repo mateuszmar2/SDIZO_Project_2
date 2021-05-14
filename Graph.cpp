@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <ctime>
 #include <fstream>
-#include <sstream> // do stringstreama (wczytywanie)
+
 #include "Colors.h"
 #include "Graph.h"
 
@@ -12,7 +12,7 @@ using namespace std;
 Graph::Graph()
 {
     this->matrix = NULL;
-    // this->list = NULL;
+    this->list = NULL;
     this->size_edges = 0;
     this->size_nodes = 0;
     this->start_node = 0;
@@ -25,23 +25,33 @@ Graph::~Graph()
 
 void Graph::deleteStructure()
 {
-    // Node *to_delete; // TODO czy nie da się tego łatwiej usunąć tylko przez usuwanie elementów list?
-    // Node *temp;      // TODO czy takie usuwanie macierzy jest dobre
+    Node *to_delete;
+    Node *temp;
     for (int i = 0; i < this->size_nodes; i++)
     {
         delete[] this->matrix[i];
-        // temp = list[i];
-        // while (temp != NULL)
-        // {
-        //     to_delete = temp;
-        //     temp = temp->next;
-        //     delete to_delete;
-        // }
+        temp = list[i];
+        while (temp != NULL)
+        {
+            to_delete = temp;
+            temp = temp->next;
+            delete to_delete;
+        }
     }
     delete[] this->matrix;
-    // delete[] this->list;
+    delete[] this->list;
     this->size_edges = 0;
     this->size_nodes = 0;
+}
+
+void Graph::makeGraph(int size) // utworzenie macierzy i wypełnienie jej zerami
+{
+    this->size_nodes = size;
+    this->matrix = new int *[size];
+
+    for (int i = 0; i < size; i++) // utworzenie wierszy
+        this->matrix[i] = new int[size];
+    fillZeros();
 }
 
 void Graph::fillZeros() // wypełnia macierz zerami - brak krawędzi
@@ -92,21 +102,22 @@ void Graph::printMatrix()
 
 void Graph::printList()
 {
-    // // Printowanie listy sąsiedztwa
-    // cout << endl
-    //      << "List";
-    // Node *p;
-    // for (int i = 0; i < size_nodes; i++)
-    // {
-    //     cout << endl
-    //          << RED << i << RESET << " =  ";
-    //     p = list[i];
-    //     while (p != NULL)
-    //     {
-    //         cout << "   " << p->value << "[" << p->weight << "]";
-    //         p = p->next;
-    //     }
-    // }
+    // Printowanie listy sąsiedztwa
+    cout << endl
+         << "List";
+    Node *p;
+    for (int i = 0; i < size_nodes; i++)
+    {
+        cout << endl
+             << RED << i << RESET << " :"; // numer wierzchołka
+        p = this->list[i];
+        while (p)
+        {
+            cout << "  " << p->value << "[" << p->weight << "]"; // jego sąsiedzi i wagi
+            p = p->next;
+        }
+        cout << endl;
+    }
 }
 
 void Graph::randomStructure(int size, float density, int min, int max, bool directed)
@@ -114,18 +125,12 @@ void Graph::randomStructure(int size, float density, int min, int max, bool dire
     int max_index = size - 1;
     if (this->size_nodes != 0)
         deleteStructure();
-    this->size_nodes = size;
     srand(time(NULL));
     int edges_amount = (size * (size - 1)) / 2 * density; // wyliczamy ilość krawędzi
     if (edges_amount < max_index)                         // jeśli krawędzi jest mniej niż wierzchołków
         edges_amount = max_index;                         // to zwiększamy tak aby połączyć wszystkie
 
-    this->matrix = new int *[size];
-
-    for (int i = 0; i < size; i++) // utworzenie wierszy
-        this->matrix[i] = new int[size];
-
-    fillZeros(); // wszędzie brak krawędzi
+    makeGraph(size);
 
     // tablica indeksów wierzchołków, wypełniona false, będzie true jeśli wierzchołek będzie już połączony
     bool *index_table = new bool[size];
@@ -189,27 +194,6 @@ void Graph::randomStructure(int size, float density, int min, int max, bool dire
     print();
 }
 
-int *getNumbersFromLine(string line)
-{
-    stringstream strstr;
-    strstr << line;
-    string temp;
-    int *tab = new int[3];
-    int found;
-    int i = 0;
-    while (!strstr.eof())
-    {
-        strstr >> temp;
-        if (stringstream(temp) >> found)
-        {
-            tab[i] = found;
-            i++;
-        }
-        temp = "";
-    }
-    return tab;
-}
-
 void Graph::loadGraphFromFile(const char *filename, bool directed)
 {
     ifstream file;
@@ -240,7 +224,7 @@ void Graph::loadGraphFromFile(const char *filename, bool directed)
             deleteStructure();
             return;
         }
-        this->size_nodes = temp;
+        makeGraph(temp); // utworzenie macierzy
         // wierzchołek początkowy
         file >> temp;
         if (temp < 0)
@@ -250,13 +234,6 @@ void Graph::loadGraphFromFile(const char *filename, bool directed)
             return;
         }
         this->start_node = temp;
-        // utworzenie macierzy
-        this->matrix = new int *[this->size_nodes];
-
-        for (int i = 0; i < this->size_nodes; i++) // utworzenie wierszy
-            this->matrix[i] = new int[this->size_nodes];
-
-        fillZeros();
 
         file >> temp; // wierzchołek końcowy nie jest potrzebny
         int from, to, weight;
@@ -280,7 +257,6 @@ void Graph::loadGraphFromFile(const char *filename, bool directed)
                 deleteStructure();
                 return;
             }
-            cout << from << " " << to << " " << weight << endl;
             // jeśli wszystko poprawnie to dodajemy
             this->matrix[from][to] = weight;
             if (!directed)
@@ -294,7 +270,23 @@ void Graph::loadGraphFromFile(const char *filename, bool directed)
 
 void Graph::matrixToList() // przepisanie wartości z macierzy do listy
 {
-    // for (int i = 0; i < size_nodes; i++)
-    //     for (int j = 0; j < size_nodes; j++)
-    //         this->matrix[i][j] = 0;
+    Node *node;
+    int weight;
+    this->list = new Node *[size_nodes];       // utworzenie listy wierzchołków
+    for (int i = 0; i < this->size_nodes; i++) // wypełnienie jej nullami
+        this->list[i] = NULL;
+
+    for (int i = 0; i < size_nodes; i++)
+        for (int j = 0; j < size_nodes; j++)
+        {
+            weight = this->matrix[i][j]; // dla każdej krawędzi
+            if (weight != 0)             // jeśli istnieje to dodaj do listy
+            {
+                node = new Node; // nowy wierzchołek
+                node->value = j; // wierzchołek końcowy
+                node->weight = weight;
+                node->next = this->list[i]; // nextem jest obecnie najnowszy element listy
+                this->list[i] = node;       // najnowszym elementem listy jest obecny element
+            }
+        }
 }
