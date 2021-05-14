@@ -1,21 +1,24 @@
 #include <iostream>
 #include <limits>
-// #include <cstring>
-// #include <stdlib.h>
 
 #include "Graph.h"
-#include "Ford_Bellman.h"
+#include "Bellman_Ford.h"
+#include "Prim.h"
 
 using namespace std;
 
-Graph graph;
+// Oba MST nieskierowane i dodatnie wagi
+// Path oba skierowane Bellman_Ford może mieć ujemne
 
 void menuMST()
 {
+	Graph graph;
 	int action;
 	int value;
+	int min_weight, max_weight;
 	char filename[50];
 	float density;
+	bool directed = false;
 	do
 	{
 		cout << endl
@@ -39,21 +42,38 @@ void menuMST()
 		case 2: // utworzenie losowego
 			cout << "Enter how many nodes you want to create: ";
 			cin >> value;
+			if (value <= 0)
+			{
+				cout << "Invalid number of edges" << endl;
+				break;
+			}
 			cout << "Enter the density: ";
 			cin >> density;
+			if (density < 0 || density > 1)
+			{
+				cout << "Invalid density" << endl;
+				break;
+			}
+			cout << "Enter min weight: ";
+			cin >> min_weight;
+			cout << "Enter max weight: ";
+			cin >> max_weight;
 			cout << endl;
-			graph.randomStructure(value, density);
+			if (min_weight < 0 || max_weight < 0)
+			{
+				cout << "Weight must be positive" << endl;
+				break;
+			}
+			graph.randomStructure(value, density, min_weight, max_weight, directed);
 			break;
 		case 3: // utworzenie z pliku
-				/*
-            cout << "Enter file name: ";
-            cin >> filename;
-            cout << endl;
-            heap.buildFromFile(filename);
-            heap.displayHeap();
-		*/
+			cout << "Enter file name: ";
+			cin >> filename;
+			cout << endl;
+			graph.loadGraphFromFile(filename, directed);
 			break;
 		case 4: // Prim
+			primMatrix(graph);
 			break;
 		case 5: // Kruskal
 			break;
@@ -68,10 +88,13 @@ void menuMST()
 
 void menuPath()
 {
+	Graph graph;
 	int action;
 	int value;
+	int min_weight, max_weight;
 	char filename[50];
 	float density;
+	bool directed = true;
 	do
 	{
 		cout << endl
@@ -79,7 +102,7 @@ void menuPath()
 		cout << "1 - Display graph " << endl;
 		cout << "2 - Make random graph " << endl;
 		cout << "3 - Build graph from file " << endl;
-		cout << "4 - Ford-Bellaman algorithm " << endl;
+		cout << "4 - Bellman-Ford algorithm " << endl;
 		cout << "5 - Dijkstra algorithm " << endl;
 		cout << "6 - Exit shortest path mode " << endl;
 		cout << "PATH> ";
@@ -95,24 +118,41 @@ void menuPath()
 		case 2: // utworzenie losowego
 			cout << "Enter how many nodes you want to create: ";
 			cin >> value;
+			if (value <= 0)
+			{
+				cout << "Invalid number of edges" << endl;
+				break;
+			}
 			cout << "Enter the density: ";
 			cin >> density;
+			if (density < 0 || density > 1)
+			{
+				cout << "Invalid density" << endl;
+				break;
+			}
+			cout << "Enter min weight: ";
+			cin >> min_weight;
+			cout << "Enter max weight: ";
+			cin >> max_weight;
 			cout << endl;
-			graph.randomStructure(value, density);
+			graph.randomStructure(value, density, min_weight, max_weight, directed);
+			min_weight = max_weight = 0;
 			break;
 		case 3: // utworzenie z pliku
-				/*
-            cout << "Enter file name: ";
-            cin >> filename;
-            cout << endl;
-            heap.buildFromFile(filename);
-            heap.displayHeap();
-		*/
+			cout << "Enter file name: ";
+			cin >> filename;
+			cout << endl;
+			graph.loadGraphFromFile(filename, directed);
 			break;
-		case 4: // Ford-Bellaman
-			fordBellmanMatrix(graph);
+		case 4: // Bellman - Ford
+			bellmanFordMatrix(graph);
 			break;
 		case 5: // Dijkstra
+			if (min_weight < 0 || max_weight < 0)
+			{
+				cout << "Weight must be positive" << endl;
+				break;
+			}
 			break;
 		case 6: // wyjście
 			break;
@@ -130,8 +170,8 @@ void menu()
 	{
 		cout << endl
 			 << "Which algorithm you want to test? Type appropriate letter " << endl;
-		cout << "m - Wyznaczanie minimalnego drzewa rozpinającego (MST) " << endl;
-		cout << "p - Wyznaczanie najkrótszej ścieżki w grafie " << endl;
+		cout << "m - Determining the minimum spanning tree (MST) " << endl;
+		cout << "p - Finding the shortest path in the graph " << endl;
 		cout << "e - Exit the program " << endl;
 		cout << "> ";
 		cin >> choice;

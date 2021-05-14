@@ -1,21 +1,13 @@
-#define RESET "\033[0m"
-#define RED "\033[31m"
-
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
 #include <ctime>
 #include <fstream>
 #include <sstream> // do stringstreama (wczytywanie)
-// #include <climits> // do INT_MAX
-
+#include "Colors.h"
 #include "Graph.h"
 
 using namespace std;
-
-// Node::Node()
-// {
-// }
 
 Graph::Graph()
 {
@@ -52,7 +44,7 @@ void Graph::deleteStructure()
     this->size_nodes = 0;
 }
 
-void Graph::fillZeros()
+void Graph::fillZeros() // wypełnia macierz zerami - brak krawędzi
 {
     for (int i = 0; i < size_nodes; i++)
         for (int j = 0; j < size_nodes; j++)
@@ -61,7 +53,13 @@ void Graph::fillZeros()
 
 void Graph::print()
 {
+    if (size_nodes == 0)
+    {
+        cout << "Graph is empty" << endl;
+        return;
+    }
     printMatrix();
+    printList();
 }
 
 void Graph::printMatrix()
@@ -71,14 +69,14 @@ void Graph::printMatrix()
          << "Matrix" << endl
          << " ";
     for (int i = 0; i < this->size_nodes; i++)
-        cout << "   " << RED << i << RESET;
+        cout << "   " << RED << i << RESET; // kolumny
     cout << endl;
     for (int i = 0; i < this->size_nodes; i++)
     {
-        cout << RED << i << RESET << "   ";
+        cout << RED << i << RESET << "   "; // wiersze
         for (int j = 0; j < this->size_nodes; j++)
         {
-            if (this->matrix[i][j] == 0)
+            if (this->matrix[i][j] == 0) // nie wypisuj 0 czyli braku krawędzi
             {
                 cout << " "
                      << "   ";
@@ -90,6 +88,10 @@ void Graph::printMatrix()
         }
         cout << endl;
     }
+}
+
+void Graph::printList()
+{
     // // Printowanie listy sąsiedztwa
     // cout << endl
     //      << "List";
@@ -107,7 +109,7 @@ void Graph::printMatrix()
     // }
 }
 
-void Graph::randomStructure(int size, float density) // TODO min max directed
+void Graph::randomStructure(int size, float density, int min, int max, bool directed)
 {
     int max_index = size - 1;
     if (this->size_nodes != 0)
@@ -123,54 +125,67 @@ void Graph::randomStructure(int size, float density) // TODO min max directed
     for (int i = 0; i < size; i++) // utworzenie wierszy
         this->matrix[i] = new int[size];
 
-    fillZeros();
+    fillZeros(); // wszędzie brak krawędzi
 
-    // tablica indeksów wierzchołków
-    int *index_table = new int[size];
-
-    int temp, random_index;
+    // tablica indeksów wierzchołków, wypełniona false, będzie true jeśli wierzchołek będzie już połączony
+    bool *index_table = new bool[size];
     for (int i = 0; i < size; i++)
-        index_table[i] = i; // przypisanie wierzchołków
-
-    //mieszanie kolejności w tablicy w celu utworzenia losowych połączeń
-    for (int i = 0; i < size; i++)
-    {
-        random_index = rand() % max_index;
-        temp = index_table[i];
-        index_table[i] = index_table[random_index];
-        index_table[random_index] = temp;
-    }
-
+        index_table[i] = false;
     // Na początku trzeba utworzyć minimalne drzewo rozpinające
     int random_weight;
+    int random_index = 0;
+    int index = 0;
     for (int i = 0; i < max_index; i++)
     {
+        index_table[index] = true; // wierzchołek do którego wcześniej doszliśmy jest odznaczony
+        // wyszukiwanie wierzchołka który jeszcze nie jest podłączony
+        do
+        {
+            random_index = rand() % size;    // losowy index
+        } while (index_table[random_index]); // szukamy dopóki nie znajdziemy odpowiedniego
         // wagi krawędzi
-        random_weight = rand() % 9 + 1; // od 1-9
+        do
+        {
+            random_weight = rand() % (max - min + 1) + min; // od max to min
+        } while (random_weight == 0);                       // waga nie może być równa 0
+
         //wypełnienie macierzy wagami
-        this->matrix[index_table[i]][index_table[i + 1]] = random_weight; // TODO if directed
+        this->matrix[index][random_index] = random_weight;
+        if (!directed) // jeśli nieskierowana to dodać połączenie w drugą stronę
+            this->matrix[random_index][index] = random_weight;
+
+        index = random_index; // nowy indeks od którego wyjdziemy to ten wyżej wylosowany
     }
     // sprawdzenie czy należy dodać więcej krawędzi
-    if (density != 0)
+    if (edges_amount != max_index)
     {
         int line, column;
+        int if_directed = 2;
+        if (!directed)
+            if_directed = 1;
+
         // dodanie reszty krawędzi
-        for (int i = max_index; i < edges_amount * 2; i++)
+        for (int i = max_index; i < edges_amount * if_directed; i++)
         {
-            random_weight = rand() % 9 + 1; // od 1-9
-            while (true)                    // dopóki nie znajdziemy miejsca w którym nie ma krawędzi
+            do
+            {
+                random_weight = rand() % (max - min + 1) + min; // od max to min
+            } while (random_weight == 0);                       // waga nie może być równa 0
+            while (true)                                        // dopóki nie znajdziemy miejsca w którym nie ma krawędzi
             {
                 line = rand() % size;
                 column = rand() % size;
                 if (this->matrix[line][column] == 0 && line != column)
                     break;
             }
-            this->matrix[line][column] = random_weight; // TODO if directed
+            this->matrix[line][column] = random_weight;
+            if (!directed)
+                this->matrix[column][line] = random_weight;
         }
     }
     delete[] index_table;
     this->size_edges = edges_amount;
-    // matrixToList();
+    matrixToList();
     print();
 }
 
@@ -195,9 +210,8 @@ int *getNumbersFromLine(string line)
     return tab;
 }
 
-void Graph::loadGraphFromFile(const char *filename)
+void Graph::loadGraphFromFile(const char *filename, bool directed)
 {
-    string line;
     ifstream file;
     file.open(filename);
 
@@ -207,114 +221,80 @@ void Graph::loadGraphFromFile(const char *filename)
     {
         if (this->size_nodes != 0)
             deleteStructure();
-        getline(file, line);
-        int *line_split = getNumbersFromLine(line);
-        this->size_edges = line_split[0];
-        this->size_nodes = line_split[1];
-        this->start_node = line_split[2];
-        delete[] line_split;
 
+        int temp;
+        // pierwsze krawędzie
+        file >> temp;
+        if (temp <= 0)
+        {
+            cout << "The number of edges is incorrect" << endl;
+            deleteStructure();
+            return;
+        }
+        this->size_edges = temp;
+        // później wierzchołki
+        file >> temp;
+        if (temp <= 0)
+        {
+            cout << "The number of nodes is incorrect" << endl;
+            deleteStructure();
+            return;
+        }
+        this->size_nodes = temp;
+        // wierzchołek początkowy
+        file >> temp;
+        if (temp < 0)
+        {
+            cout << "The start node number is incorrect" << endl;
+            deleteStructure();
+            return;
+        }
+        this->start_node = temp;
+        // utworzenie macierzy
         this->matrix = new int *[this->size_nodes];
+
         for (int i = 0; i < this->size_nodes; i++) // utworzenie wierszy
             this->matrix[i] = new int[this->size_nodes];
+
         fillZeros();
 
-        int i = 0;
-        while (getline(file, line) && i < this->size_edges)
+        file >> temp; // wierzchołek końcowy nie jest potrzebny
+        int from, to, weight;
+        for (int i = 0; i < this->size_edges; i++)
         {
-            int *line_split = getNumbersFromLine(line);
-            this->matrix[line_split[0]][line_split[1]] = line_split[2]; // TODO if directed
-            delete[] line_split;
-            i++;
+            if (!(file >> from))
+            {
+                cout << "The size given in the file is not appropriate for the number of elements" << endl;
+                deleteStructure();
+                return;
+            }
+            if (!(file >> to))
+            {
+                cout << "The size given in the file is not appropriate for the number of elements" << endl;
+                deleteStructure();
+                return;
+            }
+            if (!(file >> weight))
+            {
+                cout << "The size given in the file is not appropriate for the number of elements" << endl;
+                deleteStructure();
+                return;
+            }
+            cout << from << " " << to << " " << weight << endl;
+            // jeśli wszystko poprawnie to dodajemy
+            this->matrix[from][to] = weight;
+            if (!directed)
+                this->matrix[to][from] = weight;
         }
         file.close();
-        // matrixToList();
+        matrixToList();
         print();
     }
 }
 
-// int Graph::getStartNode()
-// {
-//     return this->start_node;
-// }
-
-void Graph::matrixToList()
+void Graph::matrixToList() // przepisanie wartości z macierzy do listy
 {
-    for (int i = 0; i < size_nodes; i++)
-        for (int j = 0; j < size_nodes; j++)
-            this->matrix[i][j] = 0;
+    // for (int i = 0; i < size_nodes; i++)
+    //     for (int j = 0; j < size_nodes; j++)
+    //         this->matrix[i][j] = 0;
 }
-
-// void Graph::ford_Bellman()
-// {
-//     // wagi ujemne
-//     int *distance = new int[this->size_nodes]; // tablica na koszt dojścia do elementu
-//     int *prev = new int[this->size_nodes];     // tablica na poprzedniki
-
-//     for (int i = 0; i < this->size_nodes; i++)
-//     {
-//         distance[i] = INT_MAX; // maksymalne wartości
-//         prev[i] = -1;          // -1 oznacza brak poprzednika
-//     }
-//     distance[start_node] = 0; //koszt dojścia do wierzchołka startowego
-//     bool change = false;      // zmienna przechowująca informacje o zmianach
-//     // pętla główna
-//     for (int i = 1; i < this->size_nodes; i++)
-//     {
-//         change = true;
-//         for (int j = 0; j < size_nodes; j++)
-//         {
-//             for (int k = 0; k < this->size_nodes; k++) // dla każdego sąsiada wierzchołka j
-//             {
-//                 if (this->matrix[j][k] != 0 && distance[j] != INT_MAX)
-//                 {
-//                     if (distance[k] > distance[j] + matrix[j][k]) // warunek relaksacji krawędzi
-//                     {
-//                         change = false;                           // zapamiętanie zmiany
-//                         distance[k] = distance[j] + matrix[j][k]; // relaksacja
-//                         prev[k] = j;                              // zmiana poprzednika
-//                     }
-//                 }
-//             }
-//         }
-//         if (change)
-//             break;
-//     }
-//     // sprawdzenie czy nie wystąpił cykl ujemny
-//     for (int i = 0; i < this->size_nodes; i++)
-//     {
-//         for (int j = 0; j < this->size_nodes; j++)
-//         {
-//             if (matrix[i][j] != 0)
-//             {
-//                 if (distance[j] > distance[i] + matrix[i][j])
-//                     change = false;
-//             }
-//         }
-//     }
-//     if (!change)
-//     {
-//         cout << "Cykl ujemny" << endl;
-//         delete[] distance;
-//         delete[] prev;
-//         return;
-//     }
-//     // wyświetlenie macierzy
-//     printMatrix();
-//     // wyświetlany jest numer węzła, długość drogi do niego oraz droga w postaci sekwencji wierzchołków
-//     cout << endl
-//          << "Wynik Ford-Bellman Macierz: " << endl;
-//     cout << "numer wezla : dlugosc -> droga" << endl;
-
-//     for (int i = 0; i < this->size_nodes; i++)
-//     {
-//         cout << i << ": " << distance[i] << " -> ";
-//         for (int j = i; j != -1; j = prev[j])
-//         {
-//             cout << j << " ";
-//         }
-//         cout << endl;
-//     }
-//     delete[] distance;
-//     delete[] prev;
-// }
