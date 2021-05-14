@@ -72,6 +72,7 @@ void menuMST()
 			break;
 		case 4: // Prim
 			primMatrix(graph);
+			primList(graph);
 			break;
 		case 5: // Kruskal
 			break;

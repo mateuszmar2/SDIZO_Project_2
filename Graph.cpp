@@ -30,7 +30,7 @@ void Graph::deleteStructure()
     for (int i = 0; i < this->size_nodes; i++)
     {
         delete[] this->matrix[i];
-        temp = list[i];
+        temp = this->list[i];
         while (temp != NULL)
         {
             to_delete = temp;
@@ -51,6 +51,10 @@ void Graph::makeGraph(int size) // utworzenie macierzy i wypełnienie jej zerami
 
     for (int i = 0; i < size; i++) // utworzenie wierszy
         this->matrix[i] = new int[size];
+    // utworzenie listy
+    this->list = new Node *[size_nodes];       // utworzenie listy wierzchołków
+    for (int i = 0; i < this->size_nodes; i++) // wypełnienie jej nullami
+        this->list[i] = NULL;
     fillZeros();
 }
 
@@ -272,10 +276,6 @@ void Graph::matrixToList() // przepisanie wartości z macierzy do listy
 {
     Node *node;
     int weight;
-    this->list = new Node *[size_nodes];       // utworzenie listy wierzchołków
-    for (int i = 0; i < this->size_nodes; i++) // wypełnienie jej nullami
-        this->list[i] = NULL;
-
     for (int i = 0; i < size_nodes; i++)
         for (int j = 0; j < size_nodes; j++)
         {
