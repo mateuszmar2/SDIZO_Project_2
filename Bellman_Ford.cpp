@@ -1,13 +1,13 @@
 #include <iostream>
 #include <climits> // do INT_MAX
-#include "Ford_Bellman.h"
+
+#include "Bellman_Ford.h"
 #include "Graph.h"
 
 using namespace std;
 
-void fordBellmanMatrix(Graph graph)
+void bellmanFordMatrix(Graph &graph)
 {
-    // wagi ujemne
     int *distance = new int[graph.size_nodes]; // tablica na koszt dojścia do elementu
     int *prev = new int[graph.size_nodes];     // tablica na poprzedniki
 
@@ -26,9 +26,9 @@ void fordBellmanMatrix(Graph graph)
         {
             for (int k = 0; k < graph.size_nodes; k++) // dla każdego sąsiada wierzchołka j
             {
-                if (graph.matrix[j][k] != 0 && distance[j] != INT_MAX)
+                if (graph.matrix[j][k] != 0 && distance[j] != INT_MAX) // czy istnieje krawędź i czy znamy koszt dojścia do obecnego elementu
                 {
-                    if (distance[k] > distance[j] + graph.matrix[j][k]) // warunek relaksacji krawędzi
+                    if (distance[k] > distance[j] + graph.matrix[j][k]) // warunek relaksacji krawędzi, jeżeli znaleziona droga do wierzchołka jest krótsza
                     {
                         change = false;                                 // zapamiętanie zmiany
                         distance[k] = distance[j] + graph.matrix[j][k]; // relaksacja
@@ -37,7 +37,7 @@ void fordBellmanMatrix(Graph graph)
                 }
             }
         }
-        if (change)
+        if (change) // jeśli w tym obiegu nie było żadnej zmiany to kończymy algorytm
             break;
     }
     // sprawdzenie czy nie wystąpił cykl ujemny
@@ -63,8 +63,8 @@ void fordBellmanMatrix(Graph graph)
     graph.printMatrix();
     // wyświetlany jest numer węzła, długość drogi do niego oraz droga w postaci sekwencji wierzchołków
     cout << endl
-         << "Wynik Ford-Bellman Macierz: " << endl;
-    cout << "numer wezla : dlugosc -> droga" << endl;
+         << "Ford-Bellman matrix: " << endl;
+    cout << "Node number : distance -> path" << endl;
 
     for (int i = 0; i < graph.size_nodes; i++)
     {
@@ -79,6 +79,6 @@ void fordBellmanMatrix(Graph graph)
     delete[] prev;
 }
 
-void fordBellmanList(Graph graph)
+void bellmanFordList(Graph &graph)
 {
 }
