@@ -4,6 +4,7 @@
 #include "Graph.h"
 #include "Bellman_Ford.h"
 #include "Prim.h"
+#include "Dijkstra.h"
 
 using namespace std;
 
@@ -143,17 +144,20 @@ void menuPath()
 			cin >> filename;
 			cout << endl;
 			graph.loadGraphFromFile(filename, directed);
+			min_weight = max_weight = 0; // wczytując nie znam wag, ta linijka zakłada że wagi są dobre
 			break;
 		case 4: // Bellman - Ford
 			bellmanFordMatrix(graph);
 			bellmanFordList(graph);
 			break;
-		case 5: // Dijkstra
-			if (min_weight < 0 || max_weight < 0)
+		case 5:									  // Dijkstra
+			if (min_weight < 0 || max_weight < 0) // 147 po to żeby tu nie krzyczał
 			{
 				cout << "Weight must be positive" << endl;
 				break;
 			}
+			dijkstraMatrix(graph);
+			dijkstraList(graph);
 			break;
 		case 6: // wyjście
 			break;
