@@ -40,7 +40,7 @@ void dijkstraMatrix(Graph &graph)
             {
                 distance[j] = distance[node_dijkstra.index] + weight;
                 prev[j] = node_dijkstra.index;
-                Q.push({distance[j], j}); // wierzchołek do którego znaleziono drogę na stos
+                Q.push({distance[j], j}); // wierzchołek do którego znaleziono drogę do kolejki
                 if (weight < 0)           // jeśli wystąpi negatywna waga krawędzi
                     chech_if_negative = true;
             }
@@ -58,7 +58,8 @@ void dijkstraMatrix(Graph &graph)
     graph.printMatrix();
     // wyświetlany jest numer węzła, długość drogi do niego oraz droga w postaci sekwencji wierzchołków
     cout << endl
-         << "Dijkstra matrix: " << endl;
+         << "Dijkstra matrix: " << endl
+         << "Start = " << graph.start_node << endl;
     cout << "Node number : distance -> path" << endl;
 
     for (int i = 0; i < graph.size_nodes; i++)
@@ -105,7 +106,7 @@ void dijkstraList(Graph &graph)
             {
                 distance[node->value] = distance[node_dijkstra.index] + node->weight;
                 prev[node->value] = node_dijkstra.index;
-                Q.push({distance[node->value], node->value}); // wierzchołek do którego znaleziono drogę na stos
+                Q.push({distance[node->value], node->value}); // wierzchołek do którego znaleziono drogę do kolejki
                 if (node->weight < 0)                         // jeśli wystąpi negatywna waga krawędzi
                     chech_if_negative = true;
             }
@@ -123,7 +124,8 @@ void dijkstraList(Graph &graph)
     graph.printList();
     // wyświetlany jest numer węzła, długość drogi do niego oraz droga w postaci sekwencji wierzchołków
     cout << endl
-         << "Dijkstra list: " << endl;
+         << "Dijkstra list: " << endl
+         << "Start = " << graph.start_node << endl;
     cout << "Node number : distance -> path" << endl;
 
     for (int i = 0; i < graph.size_nodes; i++)

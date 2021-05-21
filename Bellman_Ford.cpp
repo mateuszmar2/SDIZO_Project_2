@@ -63,7 +63,8 @@ void bellmanFordMatrix(Graph &graph)
     graph.printMatrix();
     // wyświetlany jest numer węzła, długość drogi do niego oraz droga w postaci sekwencji wierzchołków
     cout << endl
-         << "Ford-Bellman matrix: " << endl;
+         << "Bellman-Ford matrix: " << endl
+         << "Start = " << graph.start_node << endl;
     cout << "Node number : distance -> path" << endl;
 
     for (int i = 0; i < graph.size_nodes; i++)
@@ -123,16 +124,17 @@ void bellmanFordList(Graph &graph)
     }
     if (!change)
     {
-        cout << "Cykl ujemny" << endl;
+        cout << "Negative cycle" << endl;
         delete[] distance;
         delete[] prev;
         return;
     }
-    // wyświetlenie macierzy
+    // wyświetlenie listy
     graph.printList();
     // wyświetlany jest numer węzła, długość drogi do niego oraz droga w postaci sekwencji wierzchołków
     cout << endl
-         << "Ford-Bellman list: " << endl;
+         << "Bellman-Ford list: " << endl
+         << "Start = " << graph.start_node << endl;
     cout << "Node number : distance -> path" << endl;
 
     for (int i = 0; i < graph.size_nodes; i++)

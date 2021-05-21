@@ -108,12 +108,12 @@ void Graph::printList()
 {
     // Printowanie listy sąsiedztwa
     cout << endl
-         << "List";
+         << "List" << endl;
     Node *p;
     for (int i = 0; i < size_nodes; i++)
     {
-        cout << endl
-             << RED << i << RESET << " :"; // numer wierzchołka
+        cout
+            << RED << i << RESET << " :"; // numer wierzchołka
         p = this->list[i];
         while (p)
         {

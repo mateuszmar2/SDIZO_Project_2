@@ -8,6 +8,15 @@ struct Edge
     int to;
 };
 
+class EdgeComparator
+{
+public:
+    bool operator()(Edge edge1, Edge edge2)
+    {
+        return edge1.weight > edge2.weight;
+    }
+};
+
 class Node
 {
 public:

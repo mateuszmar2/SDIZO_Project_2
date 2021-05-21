@@ -43,7 +43,7 @@ void primMatrix(Graph &graph)
     }
     graph_mst.printMatrix();
     cout << endl
-         << "Suma wag (Prim): " << minimum_cost << endl;
+         << "Sum of weights (Prim): " << minimum_cost << endl;
 }
 
 void primList(Graph &graph)
@@ -93,5 +93,5 @@ void primList(Graph &graph)
     }
     graph_mst.printList();
     cout << endl
-         << "Suma wag (Prim): " << minimum_cost << endl;
+         << "Sum of weights (Prim): " << minimum_cost << endl;
 }

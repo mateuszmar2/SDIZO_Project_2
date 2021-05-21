@@ -5,6 +5,7 @@
 #include "Bellman_Ford.h"
 #include "Prim.h"
 #include "Dijkstra.h"
+#include "Kruskal.h"
 
 using namespace std;
 
@@ -76,6 +77,8 @@ void menuMST()
 			primList(graph);
 			break;
 		case 5: // Kruskal
+			kruskalMatrix(graph);
+			kruskalList(graph);
 			break;
 		case 6: // wyjście
 			break;
@@ -91,6 +94,7 @@ void menuPath()
 	Graph graph;
 	int action;
 	int value;
+	int start;
 	int min_weight, max_weight;
 	char filename[50];
 	float density;
@@ -147,15 +151,21 @@ void menuPath()
 			min_weight = max_weight = 0; // wczytując nie znam wag, ta linijka zakłada że wagi są dobre
 			break;
 		case 4: // Bellman - Ford
+			cout << "Enter start node: ";
+			cin >> start;
+			graph.start_node = start;
 			bellmanFordMatrix(graph);
 			bellmanFordList(graph);
 			break;
 		case 5:									  // Dijkstra
-			if (min_weight < 0 || max_weight < 0) // 147 po to żeby tu nie krzyczał
+			if (min_weight < 0 || max_weight < 0) // 151 po to żeby tu nie było problemu
 			{
 				cout << "Weight must be positive" << endl;
 				break;
 			}
+			cout << "Enter start node: ";
+			cin >> start;
+			graph.start_node = start;
 			dijkstraMatrix(graph);
 			dijkstraList(graph);
 			break;
