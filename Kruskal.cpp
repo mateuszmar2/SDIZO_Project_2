@@ -39,7 +39,6 @@ void unionSets(int x, int y, int *parent, int *tree_height)
 void kruskalMatrix(Graph &graph)
 {
     Graph graph_mst; // graf na wynik
-    int edge_count = 0;
     int weight;
     int minimum_cost = 0;
     Edge e;
@@ -60,13 +59,13 @@ void kruskalMatrix(Graph &graph)
     sort(edges_vector.begin(), edges_vector.end(), [](Edge edge1, Edge edge2) {
         return edge1.weight > edge2.weight;
     });
-    while (edge_count < graph.size_nodes - 1) // główna pętla algorytmu
+    while (graph_mst.size_edges < graph.size_nodes - 1) // główna pętla algorytmu
     {
         e = edges_vector.back();
         edges_vector.pop_back();                              // pobieraj nową krawędź z vectora
         if (findSet(e.from, parent) != findSet(e.to, parent)) // jeżeli ta krawędź połączy dwa różne zbiory
         {
-            edge_count++;
+            graph_mst.size_edges++;
             minimum_cost += e.weight;                     // dodaj wagę do sumy kosztu
             unionSets(e.from, e.to, parent, tree_height); // połącz zbiory
             graph_mst.matrix[e.from][e.to] = e.weight;    // utwórz krawędź nieskierowaną w grafie na wynik
@@ -87,7 +86,6 @@ void kruskalList(Graph &graph)
     Node *p;
     Node *node;
     int minimum_cost = 0;
-    int edge_count = 0;
     int *parent = new int[graph.size_nodes]; // tablica której indeksem jest numer wierzchołka
     int *tree_height = new int[graph.size_nodes];
     graph_mst.makeGraph(graph.size_nodes);
@@ -103,13 +101,13 @@ void kruskalList(Graph &graph)
     sort(edges_vector.begin(), edges_vector.end(), [](Edge edge1, Edge edge2) {
         return edge1.weight > edge2.weight;
     });
-    while (edge_count < graph.size_nodes - 1) // główna pętla algorytmu
+    while (graph_mst.size_edges < graph.size_nodes - 1) // główna pętla algorytmu
     {
         e = edges_vector.back();
         edges_vector.pop_back();                              // pobieraj nową krawędź z vectora
         if (findSet(e.from, parent) != findSet(e.to, parent)) // jeżeli ta krawędź połączy dwa różne zbiory
         {
-            edge_count++;
+            graph_mst.size_edges++;
             minimum_cost += e.weight;                     // dodaj wagę do sumy kosztu
             unionSets(e.from, e.to, parent, tree_height); // połącz zbiory
             // utwórz wierzchołek i dodaj do listy

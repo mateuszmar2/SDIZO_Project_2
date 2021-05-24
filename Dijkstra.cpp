@@ -12,7 +12,7 @@ void dijkstraMatrix(Graph &graph)
 {
     NodeDijkstra node_dijkstra; // wskaźnik na obiek z odległością do wierzchołka i jego indeksem, używany w kolejce
     int weight;
-    bool chech_if_negative = false; // jeśli wystąpią krawędzie ujemne
+    bool check_if_negative = false; // jeśli wystąpią krawędzie ujemne
 
     int *distance = new int[graph.size_nodes]; // tablica na koszt dojścia do elementu
     int *prev = new int[graph.size_nodes];     // tablica na poprzedniki
@@ -42,12 +42,17 @@ void dijkstraMatrix(Graph &graph)
                 prev[j] = node_dijkstra.index;
                 Q.push({distance[j], j}); // wierzchołek do którego znaleziono drogę do kolejki
                 if (weight < 0)           // jeśli wystąpi negatywna waga krawędzi
-                    chech_if_negative = true;
+                {
+                    check_if_negative = true;
+                    break;
+                }
             }
         }
+        if (check_if_negative)
+            break;
     }
 
-    if (chech_if_negative)
+    if (check_if_negative)
     {
         cout << "Negative weight" << endl;
         delete[] distance;
@@ -79,7 +84,7 @@ void dijkstraList(Graph &graph)
 {
     NodeDijkstra node_dijkstra; // wskaźnik na obiek z odległością do wierzchołka i jego indeksem, używany w kolejce
     Node *node;
-    bool chech_if_negative = false; // jeśli wystąpią krawędzie ujemne
+    bool check_if_negative = false; // jeśli wystąpią krawędzie ujemne
 
     int *distance = new int[graph.size_nodes]; // tablica na koszt dojścia do elementu
     int *prev = new int[graph.size_nodes];     // tablica na poprzedniki
@@ -108,12 +113,18 @@ void dijkstraList(Graph &graph)
                 prev[node->value] = node_dijkstra.index;
                 Q.push({distance[node->value], node->value}); // wierzchołek do którego znaleziono drogę do kolejki
                 if (node->weight < 0)                         // jeśli wystąpi negatywna waga krawędzi
-                    chech_if_negative = true;
+                {
+                    check_if_negative = true;
+                    check_if_negative = true;
+                    break;
+                }
             }
         }
+        if (check_if_negative)
+            break;
     }
 
-    if (chech_if_negative)
+    if (check_if_negative)
     {
         cout << "Negative weight" << endl;
         delete[] distance;

@@ -152,18 +152,28 @@ void menuPath()
 		case 4: // Bellman - Ford
 			cout << "Enter start node: ";
 			cin >> start;
+			if (start > graph.size_nodes - 1)
+			{
+				cout << "There is no such node" << endl;
+				break;
+			}
 			graph.start_node = start;
 			bellmanFordMatrix(graph);
 			bellmanFordList(graph);
 			break;
-		case 5:									  // Dijkstra
-			if (min_weight < 0 || max_weight < 0) // 151 po to żeby tu nie było problemu
-			{
-				cout << "Weight must be positive" << endl;
-				break;
-			}
+		case 5: // Dijkstra
+			// if (min_weight < 0 || max_weight < 0) // 150 po to żeby tu nie było problemu
+			// {
+			// 	cout << "Weight must be positive" << endl;
+			// 	break;
+			// }
 			cout << "Enter start node: ";
 			cin >> start;
+			if (start > graph.size_nodes - 1)
+			{
+				cout << "There is no such node" << endl;
+				break;
+			}
 			graph.start_node = start;
 			dijkstraMatrix(graph);
 			dijkstraList(graph);

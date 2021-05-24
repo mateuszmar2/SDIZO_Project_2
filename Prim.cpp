@@ -40,6 +40,9 @@ void primMatrix(Graph &graph)
         graph_mst.matrix[e.to][e.from] = e.weight;
         visited[e.to] = true; // zaznacz że wierzchołek jest już odwiedzony
         current_node = e.to;  // zmień obecny wierzchołek
+        graph_mst.size_edges++;
+        if (graph_mst.size_edges >= graph.size_nodes - 1)
+            break;
     }
     graph_mst.printMSTMatrix();
     cout << endl
@@ -90,6 +93,9 @@ void primList(Graph &graph)
 
         visited[e.to] = true; // zaznacz że wierzchołek jest już odwiedzony
         current_node = e.to;  // zmień obecny wierzchołek
+        graph_mst.size_edges++;
+        if (graph_mst.size_edges >= graph.size_nodes - 1)
+            break;
     }
     graph_mst.printMSTList();
     cout << endl

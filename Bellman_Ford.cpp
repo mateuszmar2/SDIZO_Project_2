@@ -54,7 +54,7 @@ void bellmanFordMatrix(Graph &graph)
     }
     if (!change)
     {
-        cout << "Cykl ujemny" << endl;
+        cout << "Negative cycle" << endl;
         delete[] distance;
         delete[] prev;
         return;
