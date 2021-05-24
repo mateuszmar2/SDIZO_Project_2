@@ -39,6 +39,7 @@ void unionSets(int x, int y, int *parent, int *tree_height)
 void kruskalMatrix(Graph &graph)
 {
     Graph graph_mst; // graf na wynik
+    int edge_count = 0;
     int weight;
     int minimum_cost = 0;
     Edge e;
@@ -57,12 +58,13 @@ void kruskalMatrix(Graph &graph)
                 Q.push({weight, i, j}); // krawędź do kolejki
         }
     }
-    while (!Q.empty()) // główna pętla algorytmu
+    while (edge_count < graph.size_nodes - 1) // główna pętla algorytmu
     {
         e = Q.top();
         Q.pop();                                              // pobieraj nową krawędź z kolejki
         if (findSet(e.from, parent) != findSet(e.to, parent)) // jeżeli ta krawędź połączy dwa różne zbiory
         {
+            edge_count++;
             minimum_cost += e.weight;                     // dodaj wagę do sumy kosztu
             unionSets(e.from, e.to, parent, tree_height); // połącz zbiory
             graph_mst.matrix[e.from][e.to] = e.weight;    // utwórz krawędź nieskierowaną w grafie na wynik
@@ -71,7 +73,7 @@ void kruskalMatrix(Graph &graph)
     }
     delete[] parent;
     delete[] tree_height;
-    graph_mst.printMatrix();
+    graph_mst.printMSTMatrix();
     cout << endl
          << "Sum of weights (Kruskal): " << minimum_cost << endl;
 }
@@ -79,10 +81,11 @@ void kruskalMatrix(Graph &graph)
 void kruskalList(Graph &graph)
 {
     Graph graph_mst; // graf na wynik
-    int minimum_cost = 0;
     Edge e;
     Node *p;
     Node *node;
+    int minimum_cost = 0;
+    int edge_count = 0;
     int *parent = new int[graph.size_nodes]; // tablica której indeksem jest numer wierzchołka
     int *tree_height = new int[graph.size_nodes];
     graph_mst.makeGraph(graph.size_nodes);
@@ -96,12 +99,13 @@ void kruskalList(Graph &graph)
             Q.push({p->weight, i, p->value}); // krawędź do kolejki
         }
     }
-    while (!Q.empty()) // główna pętla algorytmu
+    while (edge_count < graph.size_nodes - 1) // główna pętla algorytmu
     {
         e = Q.top();
         Q.pop();                                              // pobieraj nową krawędź z kolejki
         if (findSet(e.from, parent) != findSet(e.to, parent)) // jeżeli ta krawędź połączy dwa różne zbiory
         {
+            edge_count++;
             minimum_cost += e.weight;                     // dodaj wagę do sumy kosztu
             unionSets(e.from, e.to, parent, tree_height); // połącz zbiory
             // utwórz wierzchołek i dodaj do listy
@@ -120,7 +124,7 @@ void kruskalList(Graph &graph)
     }
     delete[] parent;
     delete[] tree_height;
-    graph_mst.printList();
+    graph_mst.printMSTList();
     cout << endl
          << "Sum of weights (Kruskal): " << minimum_cost << endl;
 }

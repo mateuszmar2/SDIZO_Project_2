@@ -41,7 +41,7 @@ void primMatrix(Graph &graph)
         visited[e.to] = true; // zaznacz że wierzchołek jest już odwiedzony
         current_node = e.to;  // zmień obecny wierzchołek
     }
-    graph_mst.printMatrix();
+    graph_mst.printMSTMatrix();
     cout << endl
          << "Sum of weights (Prim): " << minimum_cost << endl;
 }
@@ -91,7 +91,7 @@ void primList(Graph &graph)
         visited[e.to] = true; // zaznacz że wierzchołek jest już odwiedzony
         current_node = e.to;  // zmień obecny wierzchołek
     }
-    graph_mst.printList();
+    graph_mst.printMSTList();
     cout << endl
          << "Sum of weights (Prim): " << minimum_cost << endl;
 }

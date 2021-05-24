@@ -124,6 +124,46 @@ void Graph::printList()
     }
 }
 
+void Graph::printMSTMatrix()
+{
+    int weight;
+    cout << endl
+         << "Edge     Weight\n";
+    for (int i = 0; i < size_nodes; i++)
+    {
+        for (int j = 0; j < i; j++)
+        {
+            weight = this->matrix[i][j]; // dla każdej krawędzi
+            if (weight != 0)             // jeśli istnieje to dodaj do listy
+            {
+                cout << "(" << i << ", " << j << ")   " << weight << endl;
+            }
+        }
+    }
+}
+
+void Graph::printMSTList()
+{
+    int weight, j;
+    cout << endl
+         << "Edge     Weight\n";
+    Node *p;
+    for (int i = 0; i < size_nodes; i++)
+    {
+        p = this->list[i];
+        while (p)
+        {
+            weight = p->weight;
+            j = p->value;
+            if (j < i)
+            {
+                cout << "(" << i << ", " << j << ")   " << weight << endl;
+            }
+            p = p->next;
+        }
+    }
+}
+
 void Graph::randomStructure(int size, float density, int min, int max, bool directed)
 {
     int max_index = size - 1;

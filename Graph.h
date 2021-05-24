@@ -43,6 +43,8 @@ public:
     void print();
     void printMatrix();
     void printList();
+    void printMSTMatrix();
+    void printMSTList();
     void randomStructure(int size, float density, int min, int max, bool directed);
     void loadGraphFromFile(const char *filename, bool directed);
     void matrixToList();
