@@ -1,5 +1,5 @@
 #include <iostream>
-#include <queue>
+#include <algorithm>
 #include <vector>
 
 #include "Kruskal.h"
@@ -46,22 +46,24 @@ void kruskalMatrix(Graph &graph)
     int *parent = new int[graph.size_nodes]; // tablica której indeksem jest numer wierzchołka
     int *tree_height = new int[graph.size_nodes];
     graph_mst.makeGraph(graph.size_nodes);
-    // kolejka priorytetowa z typem Edge z vectorem jako typem sekwencji bazowej, EdgeComparator jako funkcja do porównywania
-    priority_queue<Edge, vector<Edge>, EdgeComparator> Q;
+    vector<Edge> edges_vector;
     makeSet(graph.size_nodes, parent, tree_height);
     for (int i = 0; i < graph.size_nodes; i++) // dodanie wszystkich krawędzi do kolejki
     {
         for (int j = 0; j < graph.size_nodes; j++) // dla każdego sąsiada wierzchołka i
         {
             weight = graph.matrix[i][j];
-            if (weight != 0)            // jezeli krawędź istnieje
-                Q.push({weight, i, j}); // krawędź do kolejki
+            if (weight != 0)                            // jezeli krawędź istnieje
+                edges_vector.push_back({weight, i, j}); // krawędź do vectora
         }
     }
+    sort(edges_vector.begin(), edges_vector.end(), [](Edge edge1, Edge edge2) {
+        return edge1.weight > edge2.weight;
+    });
     while (edge_count < graph.size_nodes - 1) // główna pętla algorytmu
     {
-        e = Q.top();
-        Q.pop();                                              // pobieraj nową krawędź z kolejki
+        e = edges_vector.back();
+        edges_vector.pop_back();                              // pobieraj nową krawędź z vectora
         if (findSet(e.from, parent) != findSet(e.to, parent)) // jeżeli ta krawędź połączy dwa różne zbiory
         {
             edge_count++;
@@ -89,20 +91,22 @@ void kruskalList(Graph &graph)
     int *parent = new int[graph.size_nodes]; // tablica której indeksem jest numer wierzchołka
     int *tree_height = new int[graph.size_nodes];
     graph_mst.makeGraph(graph.size_nodes);
-    // kolejka priorytetowa z typem Edge z vectorem jako typem sekwencji bazowej, EdgeComparator jako funkcja do porównywania
-    priority_queue<Edge, vector<Edge>, EdgeComparator> Q;
+    vector<Edge> edges_vector;
     makeSet(graph.size_nodes, parent, tree_height);
     for (int i = 1; i < graph.size_nodes; i++) // dodanie wszystkich krawędzi do kolejki
     {
         for (p = graph.list[i]; p != NULL; p = p->next)
         {
-            Q.push({p->weight, i, p->value}); // krawędź do kolejki
+            edges_vector.push_back({p->weight, i, p->value}); // krawędź do vectora
         }
     }
+    sort(edges_vector.begin(), edges_vector.end(), [](Edge edge1, Edge edge2) {
+        return edge1.weight > edge2.weight;
+    });
     while (edge_count < graph.size_nodes - 1) // główna pętla algorytmu
     {
-        e = Q.top();
-        Q.pop();                                              // pobieraj nową krawędź z kolejki
+        e = edges_vector.back();
+        edges_vector.pop_back();                              // pobieraj nową krawędź z vectora
         if (findSet(e.from, parent) != findSet(e.to, parent)) // jeżeli ta krawędź połączy dwa różne zbiory
         {
             edge_count++;
