@@ -141,7 +141,6 @@ void menuPath()
 			cin >> max_weight;
 			cout << endl;
 			graph.randomStructure(value, density, min_weight, max_weight, directed);
-			min_weight = max_weight = 0;
 			break;
 		case 3: // utworzenie z pliku
 			cout << "Enter file name: ";
